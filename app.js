@@ -1,6 +1,6 @@
 //import required modules
 const express = require("express")
-const cors = require("cors")
+
 const morgan = require("morgan")
 
 //import errors & security
@@ -19,12 +19,8 @@ const followingRoutes = require("./routes/following")
 const app = express()
 
 //middleware
-//
-let whitelist = ["https://handbookpodsync.herokuapp.com"];
-
-const corsOptions = { origin: ["https://handbookpodsync.herokuapp.com", "https://handbookpodsync.herokuapp.com/"], credentials: true }
-
-app.use(cors(corsOptions));
+let cors = require('cors')
+app.use(cors())
 app.use(express.json()) //parse incoming request bodies with JSON payloads
 app.use(morgan("tiny")) // Log request info
 
