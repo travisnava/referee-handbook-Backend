@@ -19,7 +19,12 @@ const followingRoutes = require("./routes/following")
 const app = express()
 
 //middleware
-app.use(cors()) //enable cross origin sharing
+//
+let whitelist = ["https://handbookpodsync.herokuapp.com"];
+
+const corsOptions = { origin: ["https://handbookpodsync.herokuapp.com", "https://handbookpodsync.herokuapp.com/"], credentials: true }
+
+app.use(cors(corsOptions));
 app.use(express.json()) //parse incoming request bodies with JSON payloads
 app.use(morgan("tiny")) // Log request info
 
