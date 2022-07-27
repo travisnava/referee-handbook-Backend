@@ -16,7 +16,7 @@ function getDatabaseUri() {
 
     //if we already have a database uri environmental variable, use that one
     //else we create it outselves
-    return process.env.DATABASE_URI || `postgresql://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`
+    return process.env.DATABASE_URL || `postgresql://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`
 }
 
 //set our password hashing parameter 
