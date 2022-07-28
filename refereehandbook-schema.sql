@@ -1,13 +1,13 @@
 -- CREATE USER TABLE-------------
 CREATE TABLE users (
     id          SERIAL PRIMARY KEY,
-    email       TEXT NOT NULL UNIQUE CHECK(POSITION('@' IN email) > 1),
-    username    TEXT NOT NULL,
-    password    TEXT NOT NULL,
-    first_name  TEXT NOT NULL,
-    last_name   TEXT NOT NULL,
-    location    TEXT NOT NULL,
-    profile_image_URL TEXT,
+    email       VARCHAR(250) NOT NULL UNIQUE CHECK(POSITION('@' IN email) > 1),
+    username    VARCHAR(250) NOT NULL UNIQUE,
+    password    VARCHAR(250) NOT NULL,
+    first_name  VARCHAR(250) NOT NULL,
+    last_name   VARCHAR(250) NOT NULL,
+    location    VARCHAR(250) NOT NULL,
+    profile_image_URL VARCHAR(250),
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -17,13 +17,13 @@ CREATE TABLE users (
 -------------------  CREATE AND SEED BEGINNER COURSES ----------------------
 CREATE TABLE BeginnerCourses (
     id                          SERIAL PRIMARY KEY,
-    sport_name                  TEXT NOT NULL,
-    beginner_history_timeline   TEXT NOT NULL,
-    beginner_rules              TEXT NOT NULL,
-    beginner_short_description  TEXT NOT NULL,
-    beginner_cover_image_URL    TEXT NOT NULL,
-    beginner_tutorial_video_URL TEXT NOT NULL,
-    beginner_field_diagram_URL  TEXT NOT NULL,
+    sport_name                  VARCHAR(500) NOT NULL,
+    beginner_history_timeline   VARCHAR(1000) NOT NULL,
+    beginner_rules              VARCHAR(5000) NOT NULL,
+    beginner_short_description  VARCHAR(1500) NOT NULL,
+    beginner_cover_image_URL    VARCHAR(500) NOT NULL,
+    beginner_tutorial_video_URL VARCHAR(1000) NOT NULL,
+    beginner_field_diagram_URL  VARCHAR(500) NOT NULL,
     created_at                  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -32,15 +32,15 @@ CREATE TABLE BeginnerCourses (
 ------------------------CREATE AND STORE ALL USER CREATED COURSES-----------------------------------------------------
 CREATE TABLE UserCreatedCourses (
     id                          SERIAL PRIMARY KEY,
-    sport_name                  TEXT NOT NULL,
+    sport_name                  VARCHAR(5000) NOT NULL,
     user_id                     INTEGER NOT NULL,
-    course_title                TEXT NOT NULL,
-    course_short_description    TEXT NOT NULL,
-    course_cover_image_URL 	    TEXT NOT NULL,
-    course_content              TEXT NOT NULL,
-    course_tutorial_video_URL   TEXT NOT NULL,
-    course_tips_tricks          TEXT NOT NULL,
-    difficulty                  TEXT NOT NULL,
+    course_title                VARCHAR(5000) NOT NULL,
+    course_short_description    VARCHAR(5000) NOT NULL,
+    course_cover_image_URL 	VARCHAR(5000)  NOT NULL,
+    course_content              VARCHAR(5000) NOT NULL,
+    course_tips_tricks          VARCHAR(5000) NOT NULL,
+    difficulty                  VARCHAR(5000) NOT NULL,
+    course_tutorial_video_URL   VARCHAR(5000),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     created_at                  TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -51,11 +51,11 @@ CREATE TABLE UserCreatedCourses (
 ------------------------CREATE AND STORE ALL USER FOLLOWING ACTIVITY-----------------------------------------------------
 CREATE TABLE UsersFollowingTeam (
     id                          SERIAL PRIMARY KEY,
-    team_name                   TEXT NOT NULL,
-    team_logo                   TEXT NOT NULL,
+    team_name                   VARCHAR(250) NOT NULL,
+    team_logo                   VARCHAR(250) NOT NULL,
     team_id                     INTEGER NOT NULL,
-    team_league                 TEXT NOT NULL,
-    team_sport_name             TEXT NOT NULL,
+    team_league                 VARCHAR(250) NOT NULL,
+    team_sport_name             VARCHAR(250) NOT NULL,
     user_id                     INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     following_at                TIMESTAMP NOT NULL DEFAULT NOW()

@@ -61,12 +61,26 @@ class User {
             throw new BadRequestError("Invalid email.")
         }
 
+        //checking for any fields exceeding character limits set in database
+        requiredFields.forEach(field => {
+            if(credentials[field].length > 250) {
+                throw new BadRequestError(`${field} exceeds maximum character length.`)
+            }
+        })
         //make sure no duplicates exist with same email in db
         //throw err if yes
-        const existingUser = await User.fetchUserByEmail(credentials.email)
-        if (existingUser) {
+        const existingUserEmail = await User.fetchUserByEmail(credentials.email)
+        if (existingUserEmail) {
             throw new BadRequestError(`Duplicate email: ${credentials.email}`)
-        }        
+        }
+
+        //make sure no duplicates exist with same username in db
+        //throw err if yes
+        const existingUserUsername = await User.fetchUserByUsername(credentials.username)
+        if (existingUserUsername) {
+            throw new BadRequestError(`Duplicate username: ${credentials.username}`)
+        }  
+
         const lowercasedEmail = credentials.email.toLowerCase()
         //take users pass, hash it
         const hashedPassword = await bcrypt.hash(credentials.password, BCRYPT_WORK_FACTOR)
@@ -106,6 +120,16 @@ class User {
         }
         const query = `SELECT * FROM users WHERE email = $1`
         const result = await db.query(query, [email.toLowerCase()])
+        const user = result.rows[0]
+        return user
+    }
+
+    static async fetchUserByUsername(username){
+        if (!username){
+            throw new BadRequestError("No username provided")
+        }
+        const query = `SELECT * FROM users WHERE username = $1`
+        const result = await db.query(query, [username.toLowerCase()])
         const user = result.rows[0]
         return user
     }
