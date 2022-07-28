@@ -9,10 +9,14 @@ class Profile {
         //pull all user created courses from database that the currently signed in user has created
         const results = await db.query(`
             SELECT c.sport_name,
-                   c.id,
+                   c.id AS "courseId",
                    c.course_title,
                    c.course_cover_image_URL,
                    c.course_short_description,
+                   c.course_content,
+                   c.course_tips_tricks,
+                   c.difficulty,
+                   c.course_tutorial_video_URL,
                    c.created_at,
                    c.user_id,
                    u.email
