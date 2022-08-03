@@ -50,8 +50,9 @@ router.get("/:sportName/teams", async(req, res, next) =>{
             }
         })
         
-
-        redis.set(`teams:${sportName}`, JSON.stringify(json.data.response), 'EX', 13149000)
+        if(json.data.response.length != 0){
+            redis.set(`teams:${sportName}`, JSON.stringify(json.data.response), 'EX', 13149000)
+        }
         
         return res.status(200).json({"json": json.data.response, "source": "api", "limit": json.data.errors.rateLimit})
     } catch (err) {
@@ -96,14 +97,18 @@ router.get("/:sportName/recentGame", async(req, res, next) =>{
             let filtered_games = json.data.response.filter((item)=>item.fixture.date < new Date().toISOString())
 
             // set the updated game
-            redis.set(`recentGame:${sportName}`, JSON.stringify(filtered_games[filtered_games.length - 1]), 'EX', 60)
+            if(json.data.response.length != 0){
+                redis.set(`recentGame:${sportName}`, JSON.stringify(filtered_games[filtered_games.length - 1]), 'EX', 60)
+            }
             return res.status(200).json({"json": filtered_games[filtered_games.length - 1], "source": "api"})
         }
 
         // data filtering for all the other sports
         else{
             let filtered_games_others = json.data.response.filter((item)=>item.date < new Date().toISOString())
-            redis.set(`recentGame:${sportName}`, JSON.stringify(filtered_games_others[filtered_games_others.length - 1]), 'EX', 90)
+            if(json.data.response.length != 0){
+                redis.set(`recentGame:${sportName}`, JSON.stringify(filtered_games_others[filtered_games_others.length - 1]), 'EX', 90)
+            }
             return res.status(200).json({"json": filtered_games_others[filtered_games_others.length - 1], "source": "api", "limit": json.data.errors.rateLimit})
         }     
         
@@ -126,12 +131,15 @@ router.get("/:sportName/news", async(req, res, next) =>{
 
         // otherwise, call api
         let json = await axios.get('https://api.thenewsapi.com/v1/news/all?api_token='+process.env.NEWS_API_KEY+"&search="+sportName+"&language=en&sort=published_at&limit=2&categories=sports")
-        redis.set(`news:${sportName}`, JSON.stringify(json.data.data), 'EX', 300)
+        if(json.data.data.length != 0){
+            redis.set(`news:${sportName}`, JSON.stringify(json.data.data), 'EX', 1800)
+        }
         return res.status(200).json({"news": json.data.data})
     } catch (err) {
-        if(err.response.status === 402){
-            return res.status(402).json({"error": err.response})
-        }
+        // if(err.response.status === 402){
+        //     return res.status(402).json({"error": err.response})
+        // }
+        console.error(err)
         next(err)
     }
 })
@@ -161,7 +169,9 @@ router.get("/:sportName/:teamId", async(req, res, next) =>{
                     "x-rapidapi-key": process.env.SPORTS_API_KEY
                 }
             })
-        redis.set(`team:${sportName}${teamId}`, JSON.stringify(json.data.response), 'EX', 13149000)
+        if(json.data.response.length != 0){
+            redis.set(`team:${sportName}${teamId}`, JSON.stringify(json.data.response), 'EX', 13149000)
+        }
         return res.status(200).json({"json": json.data.response, "source": "api", "limit": json.data.errors.rateLimit})
     } catch (err) {
         next(err)
@@ -170,7 +180,9 @@ router.get("/:sportName/:teamId", async(req, res, next) =>{
 
 router.get("/:sportName/:teamId/stats", async(req, res, next) => {
     try {
+        
         const {sportName, teamId} = req.params
+        
         let apiSportString = 'v1.'+sportName
         let endpoint = "/teams/statistics"
         // the api version for soccer is v3, different from the rest
@@ -197,7 +209,9 @@ router.get("/:sportName/:teamId/stats", async(req, res, next) => {
                 "x-rapidapi-key": process.env.SPORTS_API_KEY
             }
         })
-        redis.set(`stats:${sportName}${teamId}`, JSON.stringify(json.data.response), 'EX', 18000)
+        if(json.data.response.length != 0){
+            redis.set(`stats:${sportName}${teamId}`, JSON.stringify(json.data.response), 'EX', 18000)
+        }
         return res.status(200).json({"json": json.data.response, "source": "api", "limit": json.data.errors.rateLimit})
 
     } catch (err) {
@@ -231,7 +245,9 @@ router.get("/:sportName/:teamId/games", async(req, res, next) => {
                 "x-rapidapi-key": process.env.SPORTS_API_KEY
             }
         })
-        redis.set(`games:${sportName}${teamId}`, JSON.stringify(json.data.response), 'EX', 18000)
+        if(json.data.response.length != 0){
+            redis.set(`games:${sportName}${teamId}`, JSON.stringify(json.data.response), 'EX', 18000)
+        }
         return res.status(200).json({"json": json.data.response, "source": "api", "limit": json.data.errors.rateLimit})
     } catch(err){
         next(err)
