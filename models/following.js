@@ -44,6 +44,34 @@ class following {
     }
 
 
+    static async listFollowedTeamByUser({user, sportname, teamId}) {
+
+        //pull all user followed teams from database that are owned by the currently signed in user 
+        const results = await db.query(`
+            SELECT t.team_name,
+                   t.team_id,
+                   t.team_sport_name,
+                   u.email
+            FROM UsersFollowingTeam AS t
+                JOIN users AS u ON u.id = t.user_id
+            WHERE u.email = $1 AND t.team_sport_name = $2 AND t.team_id = $3
+        `, [user.email, sportname, teamId])
+        return results.rows[0]
+    }
+
+
+    static async unfollowTeam({user, sportname, teamId}) {
+
+        //delete entry where user is following team specified by teamId & sportName in function parameters
+        const results = await db.query(`
+            DELETE FROM UsersFollowingTeam AS t
+            USING users AS u
+            WHERE t.team_sport_name = $1 AND t.team_id = $2 AND u.id = t.user_id AND u.email = $3
+            RETURNING *;
+        `, [sportname, teamId, user.email,])
+        return results.rows[0]
+
+    }
 
 
 
