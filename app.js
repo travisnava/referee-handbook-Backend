@@ -6,6 +6,15 @@ const morgan = require("morgan")
 const security = require("./middleware/security")
 const { NotFoundError } = require("./utils/errors")
 
+//middleware
+const cors= require("cors");
+const corsOptions ={
+   origin:'*', 
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+}
+
+app.use(cors(corsOptions)) //enable cross origin sharing
 
 //create routes
 const authRoutes = require("./routes/auth")
@@ -18,15 +27,6 @@ const apiRoutes = require("./routes/api")
 
 const app = express()
 
-//middleware
-const cors=require("cors");
-const corsOptions ={
-   origin:'*', 
-   credentials:true,            //access-control-allow-credentials:true
-   optionSuccessStatus:200,
-}
-
-app.use(cors(corsOptions)) //enable cross origin sharing
 app.use(express.json()) //parse incoming request bodies with JSON payloads
 app.use(morgan("tiny")) // Log request info
 
