@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt")
 const db = require("../db")
 const { BCRYPT_WORK_FACTOR } = require("../config")
-
 const { UnauthorizedError, BadRequestError } = require("../utils/errors")
 
 class User {
@@ -132,6 +131,51 @@ class User {
         const result = await db.query(query, [username.toLowerCase()])
         const user = result.rows[0]
         return user
+    }
+
+
+
+
+    static async savePasswordResetToken(email, resetToken) {
+        const result = await db.query(`
+        
+            UPDATE users
+            SET pw_reset_token = $1,
+                pw_reset_token_exp = $2
+            WHERE email = $3
+            RETURNING id, email, username, created_at;
+        `,
+        [resetToken.token, resetToken.expiresAt, email])
+        const user = result.rows[0]
+
+        return user;
+    }
+
+
+
+    static async resetPassword(token, newPassword) {
+
+        if(!newPassword) {
+            throw new BadRequestError("No password provided.")
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_WORK_FACTOR)
+        const result = await db.query (`
+            UPDATE users
+            SET password = $1,
+                pw_reset_token = NULL,
+                pw_reset_token_exp = NULL
+            WHERE pw_reset_token = $2 AND pw_reset_token_exp > NOW()
+            RETURNING id, email, username, created_at;
+        `, [hashedPassword, token])
+
+        const user = result.rows[0]
+
+        if (user) {
+            return user;
+        }
+
+        throw new BadRequestError("That token is either expired or invalid.")
     }
 
 }
