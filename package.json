@@ -2,7 +2,7 @@
   "name": "ref-handbook-api",
   "version": "1.0.0",
   "description": "Express backend for Referee's Handbook application",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js"
   },
