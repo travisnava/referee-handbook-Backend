@@ -1,5 +1,9 @@
 //import required modules
 const express = require("express")
+<<<<<<< HEAD
+
+=======
+>>>>>>> b749a271819abfafd78e6225b383c5c34ce0eeae
 const morgan = require("morgan")
 
 //import errors & security
